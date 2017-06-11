@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.io.Serializable;
 import java.util.List;
 
-public class JPARepositoryMock<TE, TK extends Serializable> implements JpaRepository<TE, TK>, JpaSpecificationExecutor<TE> {
+public class JpaRepositoryDefaultImpl<TE, TK extends Serializable> implements JpaRepository<TE, TK>, JpaSpecificationExecutor<TE> {
 
     @Override
     public List<TE> findAll() {

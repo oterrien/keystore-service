@@ -1,6 +1,6 @@
 package com.ote.keystore.credential;
 
-import com.ote.keystore.JPARepositoryMock;
+import com.ote.keystore.JpaRepositoryDefaultImpl;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import com.ote.keystore.credential.persistence.CredentialRepository;
 import org.springframework.context.annotation.Primary;
@@ -13,7 +13,7 @@ import java.util.List;
 @Profile("CredentialRepositoryMock")
 @Repository
 @Primary
-public class CredentialRepositoryMock extends JPARepositoryMock<CredentialEntity, Integer> implements CredentialRepository {
+public class CredentialRepositoryMock extends JpaRepositoryDefaultImpl<CredentialEntity, Integer> implements CredentialRepository {
 
     private final List<CredentialEntity> repositoryMock = new ArrayList<>();
 

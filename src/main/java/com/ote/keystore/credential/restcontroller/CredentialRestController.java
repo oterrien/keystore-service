@@ -1,6 +1,5 @@
 package com.ote.keystore.credential.restcontroller;
 
-import com.ote.keystore.credential.configuration.CredentialConfiguration;
 import com.ote.keystore.credential.mapper.CredentialMapperService;
 import com.ote.keystore.credential.model.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
@@ -43,10 +42,10 @@ public class CredentialRestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Page<CredentialPayload> read(@ModelAttribute CredentialPayload payloadFilter,
-                                       @RequestParam(required = false) String sortingBy,
-                                       @RequestParam(required = false, defaultValue = "ASC") String sortingDirection,
-                                       @RequestParam(required = false, defaultValue = "${page.default.size}") int pageSize,
-                                       @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+                                        @RequestParam(required = false) String sortingBy,
+                                        @RequestParam(required = false, defaultValue = "ASC") String sortingDirection,
+                                        @RequestParam(required = false, defaultValue = "${page.default.size}") int pageSize,
+                                        @RequestParam(required = false, defaultValue = "0") int pageIndex) {
 
         log.trace("get credentials where filter is " + payloadFilter);
         Specification<CredentialEntity> filter = credentialMapperService.getFilter(payloadFilter);

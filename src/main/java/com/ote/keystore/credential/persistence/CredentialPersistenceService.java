@@ -23,7 +23,7 @@ public class CredentialPersistenceService {
 
     //region read
     @Transactional(readOnly = true)
-    public boolean exists(Integer id){
+    public boolean exists(Integer id) {
         return credentialRepository.exists(id);
     }
 
@@ -52,7 +52,7 @@ public class CredentialPersistenceService {
     //region update
     public CredentialEntity reset(Integer id, CredentialEntity entity) {
 
-        if (!exists(id)){
+        if (!exists(id)) {
             throw new NotFoundException(id);
         }
         entity.setId(id);
@@ -79,7 +79,7 @@ public class CredentialPersistenceService {
 
     //region delete
     public void delete(Integer id) {
-        if (!exists(id)){
+        if (!exists(id)) {
             throw new NotFoundException(id);
         }
         credentialRepository.delete(id);

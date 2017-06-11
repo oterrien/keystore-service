@@ -1,6 +1,5 @@
 package com.ote.keystore.credential.persistence;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +9,6 @@ import javax.persistence.*;
 @Table(name = "T_CREDENTIAL")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class CredentialEntity {
 
     @Id
