@@ -3,6 +3,7 @@ package com.ote.keystore.exceptionhandler;
 import com.ote.keystore.credential.persistence.CredentialPersistenceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +17,13 @@ public class GlobalRestControllerAdvice {
     public String handle(Exception e) {
         log.error(e.getMessage(), e);
         return e.getMessage();
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BeanInvalidationResult handle(MethodArgumentNotValidException e) {
+        log.error(e.getMessage(), e);
+        return new BeanInvalidationResult(e.getBindingResult());
     }
 
     @ExceptionHandler(CredentialPersistenceService.NotFoundException.class)

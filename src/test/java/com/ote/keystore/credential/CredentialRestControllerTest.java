@@ -2,6 +2,8 @@ package com.ote.keystore.credential;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.exceptionhandler.BeanInvalidationResult;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.After;
 import org.junit.Before;
@@ -20,10 +22,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@ActiveProfiles({"CredentialPersistenceServiceMock", "CredentialRestControllerTest"})
+@ActiveProfiles({"CredentialRepositoryMock", "CredentialRestControllerTest"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CredentialRestControllerTest {
@@ -34,7 +35,7 @@ public class CredentialRestControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private CredentialPersistenceServiceMock credentialPersistenceServiceMock;
+    private CredentialRepositoryMock credentialRepositoryMock;
 
     @Before
     public void setup() throws Exception {
@@ -43,11 +44,12 @@ public class CredentialRestControllerTest {
 
     @After
     public void tearDown() {
-        credentialPersistenceServiceMock.cleanRepositoryMock();
+        credentialRepositoryMock.deleteAll();
     }
 
+    //region read
     @Test
-    public void readingItByIdShouldReturnThePayloadWhenExist() throws Exception {
+    public void reading_by_id_should_return_the_payload_when_exist() throws Exception {
 
         CredentialPayload payload = new CredentialPayload();
         payload.setLogin("loginTest");
@@ -55,21 +57,19 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        mockMvc.perform(post("/v1/keys/credentials").
-                contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload))).andReturn();
+        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0")).andReturn();
 
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
         payload.setId(0);
-        assertions.assertThat(parseFromJson(result.getResponse().getContentAsString())).isEqualTo(payload);
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload));
         assertions.assertAll();
     }
 
     @Test
-    public void readingItByIdShouldReturnNotFoundExceptionWhenNotExist() throws Exception {
+    public void reading_by_id_should_return_not_found_when_not_exist() throws Exception {
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0")).andReturn();
 
@@ -78,13 +78,206 @@ public class CredentialRestControllerTest {
         assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo("Unable to find user with id 0");
         assertions.assertAll();
     }
+    //endregion
 
-    public CredentialPayload parseFromJson(String CredentialPayloadAsJson) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(CredentialPayloadAsJson, CredentialPayload.class);
+    //region create
+    @Test
+    public void creating_should_return_the_payload_with_a_new_id() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        MvcResult result = mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        payload.setId(0);
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload));
+        assertions.assertAll();
     }
 
-    public String serializeToJson(CredentialPayload CredentialPayloadAsJson) throws IOException {
+    @Test
+    public void creating_invalid_payload_should_raise_validation_exception() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword(null); // should raise validation exception
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        MvcResult result = mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+
+        BeanInvalidationResult expected = new BeanInvalidationResult();
+        expected.setTarget(payload);
+        expected.getInvalidations().add(new BeanInvalidationResult.Invalidation("password", "NotNull", "password may not be null"));
+
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertions.assertThat(result.getResponse().getContentAsString()).isNotNull();
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(expected));
+
+        System.out.println(result.getResponse().getContentAsString());
+        assertions.assertAll();
+    }
+    //endregion
+
+    //region test delete
+    @Test
+    public void deleting_by_id_should_return_not_found_when_not_exist() throws Exception {
+
+        MvcResult result = mockMvc.perform(delete("/v1/keys/credentials/0")).andReturn();
+
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo("Unable to find user with id 0");
+        assertions.assertAll();
+    }
+
+    @Test
+    public void deleting_by_id_should_return_ok_when_exist() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+
+        MvcResult result = mockMvc.perform(delete("/v1/keys/credentials/0")).andReturn();
+
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+    //endregion
+
+    //region update
+    @Test
+    public void putting_should_return_not_found_when_not_exist() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    public void patching_should_return_not_found_when_not_exist() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        MvcResult result = mockMvc.perform(patch("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    public void putting_should_replace_entity_when_exist() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload)));
+
+        CredentialPayload payload2 = new CredentialPayload();
+        payload2.setId(0);
+        payload2.setLogin("newLoginTest");
+        payload2.setPassword("newPasswordTest");
+
+        mockMvc.perform(put("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload2)));
+
+        MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0")).andReturn();
+
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload2));
+        assertions.assertAll();
+    }
+
+    @Test
+    public void patching_should_merge_entity_when_exist() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload)));
+
+        CredentialPayload payload2 = new CredentialPayload();
+        payload2.setId(0);
+        payload2.setLogin("newLoginTest");
+        payload2.setPassword("newPasswordTest");
+
+        mockMvc.perform(patch("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload2)));
+
+        MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0")).andReturn();
+
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+
+        payload.setId(0);
+        payload.setLogin("newLoginTest");
+        payload.setPassword("newPasswordTest");
+
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload));
+        assertions.assertAll();
+    }
+
+    @Test
+    public void putting_invalid_payload_should_raise_validation_exception() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload)));
+
+        CredentialPayload payload2 = new CredentialPayload();
+        payload2.setId(0);
+        payload2.setLogin("newLoginTest");
+        payload2.setPassword(null); // invalid
+
+        MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload2))).andReturn();
+
+        BeanInvalidationResult expected = new BeanInvalidationResult();
+        expected.setTarget(payload2);
+        expected.getInvalidations().add(new BeanInvalidationResult.Invalidation("password", "NotNull", "password may not be null"));
+
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertions.assertThat(result.getResponse().getContentAsString()).isNotNull();
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(expected));
+
+        System.out.println(result.getResponse().getContentAsString());
+        assertions.assertAll();
+    }
+
+    //endregion
+
+/*    public static <T> T parseFromJson(String CredentialPayloadAsJson, Class<T> clazz) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(CredentialPayloadAsJson, clazz);
+    }*/
+
+    public static <T> String serializeToJson(T CredentialPayloadAsJson) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(CredentialPayloadAsJson);
     }

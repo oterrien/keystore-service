@@ -72,6 +72,10 @@ public class CredentialMapperService {
                 predicates.add(criteriaBuilder.equal(root.get("login"), filter.getLogin()));
             }
 
+            if (!StringUtils.isEmpty(filter.getPassword())) {
+                predicates.add(criteriaBuilder.equal(root.get("password"), filter.getPassword()));
+            }
+
             if (!StringUtils.isEmpty(filter.getApplication())) {
                 predicates.add(criteriaBuilder.equal(root.get("application"), filter.getApplication()));
             }

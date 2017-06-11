@@ -34,7 +34,7 @@ public class CredentialRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CredentialPayload read(@PathVariable("id") int id) {
+    public CredentialPayload read(@PathVariable("id") Integer id) {
         log.trace("get credential where id " + id);
         return credentialMapperService.convert(credentialPersistenceService.find(id));
     }
@@ -57,7 +57,7 @@ public class CredentialRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CredentialPayload reset(@PathVariable("id") int id, @Valid @RequestBody CredentialPayload payload) {
+    public CredentialPayload reset(@PathVariable("id") Integer id, @Valid @RequestBody CredentialPayload payload) {
         log.trace("update credential where id " + id);
         return credentialMapperService.convert(credentialPersistenceService.reset(id, credentialMapperService.convert(payload)));
     }
@@ -65,7 +65,7 @@ public class CredentialRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CredentialPayload patch(@PathVariable("id") int id, @Valid @RequestBody CredentialPayload payload) {
+    public CredentialPayload patch(@PathVariable("id") Integer id, @Valid @RequestBody CredentialPayload payload) {
         log.trace("update credential where id " + id);
         return credentialMapperService.convert(credentialPersistenceService.merge(id, credentialMapperService.convert(payload)));
     }
