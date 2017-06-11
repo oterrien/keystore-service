@@ -17,6 +17,7 @@ spring:
     password: admin
     driver-class-name: org.h2.Driver
     initialize: true
+#     initialize: false
     continue-on-error: true
     platform: h2
   jpa:
@@ -34,3 +35,17 @@ spring:
   error:
     whitelabel.enabled: true
 
+endpoints:
+  health:
+    enabled: true
+    sensitive: true
+  metrics:
+    entable: true
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+
+management:
+  security:
+    enabled: false

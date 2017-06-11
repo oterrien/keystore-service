@@ -18,8 +18,7 @@ public class PingRestController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public boolean ping() {
+    public void ping() {
         log.trace("ping #" + counter.getAndIncrement());
-        return true;
     }
 }

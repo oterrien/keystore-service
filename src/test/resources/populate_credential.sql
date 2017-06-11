@@ -1,0 +1,1 @@
+insert into T_CREDENTIAL (ID, LOGIN, PASSWORD, APPLICATION, DESCRIPTION) values (0, 'testLogin', 'testPassword', 'testApplication', 'testDescription');

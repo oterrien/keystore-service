@@ -23,6 +23,16 @@ public class CredentialPersistenceService {
 
     //region read
     @Transactional(readOnly = true)
+    public long count() {
+        return credentialRepository.count();
+    }
+
+    @Transactional(readOnly = true)
+    public long count(Specification<CredentialEntity> filter) {
+        return credentialRepository.count(filter);
+    }
+
+    @Transactional(readOnly = true)
     public boolean exists(Integer id) {
         return credentialRepository.exists(id);
     }

@@ -1,5 +1,6 @@
 package com.ote.keystore.ping;
 
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,9 +37,6 @@ public class PingRestControllerTest {
 
         MvcResult result = mockMvc.perform(get("/v1/keys")).andReturn();
 
-        SoftAssertions assertions = new SoftAssertions();
-        assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(Boolean.toString(true));
-        assertions.assertAll();
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 }
