@@ -1,8 +1,9 @@
 package com.ote.keystore.credential.persistence;
 
+import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.cryptor.Crypted;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -10,23 +11,32 @@ import javax.persistence.*;
 @Table(name = "T_CREDENTIAL")
 @Data
 @NoArgsConstructor
-public class CredentialEntity {
+public class CredentialEntity implements Cloneable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.TABLE, generator="tab")
-    @TableGenerator(name="tab", initialValue=0, allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "tab")
+    @TableGenerator(name = "tab", initialValue = 0, allocationSize = 1)
     @Column(name = "ID")
-    public Integer id;
+    private Integer id;
 
     @Column(name = "LOGIN")
-    public String login;
+    @Crypted
+    private String login;
 
     @Column(name = "PASSWORD")
-    public String password;
+    @Crypted
+    private String password;
 
     @Column(name = "APPLICATION")
-    public String application;
+    @Crypted
+    private String application;
 
     @Column(name = "DESCRIPTION")
-    public String description;
+    @Crypted
+    private String description;
+
+    @Override
+    public CredentialEntity clone() throws CloneNotSupportedException {
+        return (CredentialEntity) super.clone();
+    }
 }

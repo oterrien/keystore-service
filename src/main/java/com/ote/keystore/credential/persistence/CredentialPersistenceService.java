@@ -1,5 +1,6 @@
 package com.ote.keystore.credential.persistence;
 
+import com.ote.keystore.cryptor.CryptorService;
 import com.ote.keystore.merger.BeanMergerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class CredentialPersistenceService {
 
     @Autowired
     private CredentialRepository credentialRepository;
+
+    @Autowired
+    private CryptorService cryptorService;
 
     //region read
     @Transactional(readOnly = true)
@@ -53,23 +57,25 @@ public class CredentialPersistenceService {
     //endregion
 
     // region create
-    public CredentialEntity create(CredentialEntity entity) {
+    public CredentialEntity create(CredentialEntity entity, String secretKey) {
         entity.setId(null);
+        entity = cryptorService.encrypt(secretKey, entity);
         return credentialRepository.save(entity);
     }
     //endregion
 
     //region update
-    public CredentialEntity reset(Integer id, CredentialEntity entity) {
+    public CredentialEntity reset(Integer id, CredentialEntity entity, String secretKey) {
 
         if (!exists(id)) {
             throw new NotFoundException(id);
         }
         entity.setId(id);
+        entity = cryptorService.encrypt(secretKey, entity);
         return credentialRepository.save(entity);
     }
 
-    public CredentialEntity merge(Integer id, CredentialEntity partialEntity) {
+    public CredentialEntity merge(Integer id, CredentialEntity partialEntity, String secretKey) {
 
         CredentialEntity entity = find(id);
         if (entity == null) {
@@ -78,6 +84,7 @@ public class CredentialPersistenceService {
 
         // Copy non null properties from partialEntity to person
         try {
+            partialEntity = cryptorService.encrypt(secretKey, partialEntity);
             beanMergerService.copyNonNullProperties(partialEntity, entity);
         } catch (Exception e) {
             throw new NotMergeableException(id, e);

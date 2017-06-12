@@ -1,0 +1,1 @@
+delete from hibernate_sequences;

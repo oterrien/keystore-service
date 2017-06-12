@@ -1,6 +1,7 @@
 package com.ote.keystore.exceptionhandler;
 
 import com.ote.keystore.credential.persistence.CredentialPersistenceService;
+import com.ote.keystore.cryptor.CryptorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,6 +37,13 @@ public class GlobalRestControllerAdvice {
     @ExceptionHandler(CredentialPersistenceService.NotMergeableException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handle(CredentialPersistenceService.NotMergeableException e) {
+        log.error(e.getMessage(), e);
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(CryptorService.EncryptException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handle(CryptorService.EncryptException e) {
         log.error(e.getMessage(), e);
         return e.getMessage();
     }

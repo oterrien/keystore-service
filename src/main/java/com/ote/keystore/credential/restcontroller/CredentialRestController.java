@@ -4,6 +4,7 @@ import com.ote.keystore.credential.mapper.CredentialMapperService;
 import com.ote.keystore.credential.model.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import com.ote.keystore.credential.persistence.CredentialPersistenceService;
+import com.ote.keystore.cryptor.CryptorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -45,7 +46,8 @@ public class CredentialRestController {
                                         @RequestParam(required = false) String sortingBy,
                                         @RequestParam(required = false, defaultValue = "ASC") String sortingDirection,
                                         @RequestParam(required = false, defaultValue = "${page.default.size}") int pageSize,
-                                        @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+                                        @RequestParam(required = false, defaultValue = "0") int pageIndex,
+                                        @RequestHeader String secretKey) {
 
         log.trace("get credentials where filter is " + payloadFilter);
         Specification<CredentialEntity> filter = credentialMapperService.getFilter(payloadFilter);
@@ -56,37 +58,43 @@ public class CredentialRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CredentialPayload reset(@PathVariable("id") Integer id, @Valid @RequestBody CredentialPayload payload) {
+    public CredentialPayload reset(@PathVariable("id") Integer id,
+                                   @Valid @RequestBody CredentialPayload payload,
+                                   @RequestHeader String secretKey) {
         log.trace("update credential where id " + id);
-        return credentialMapperService.convert(credentialPersistenceService.reset(id, credentialMapperService.convert(payload)));
+        return credentialMapperService.convert(credentialPersistenceService.reset(id, credentialMapperService.convert(payload), secretKey));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CredentialPayload patch(@PathVariable("id") Integer id, @Valid @RequestBody CredentialPayload payload) {
+    public CredentialPayload patch(@PathVariable("id") Integer id,
+                                   @Valid @RequestBody CredentialPayload payload,
+                                   @RequestHeader String secretKey) throws CryptorService.EncryptException {
         log.trace("update credential where id " + id);
-        return credentialMapperService.convert(credentialPersistenceService.merge(id, credentialMapperService.convert(payload)));
+        return credentialMapperService.convert(credentialPersistenceService.merge(id, credentialMapperService.convert(payload), secretKey));
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CredentialPayload create(@Valid @RequestBody CredentialPayload payload) {
+    public CredentialPayload create(@Valid @RequestBody CredentialPayload payload,
+                                    @RequestHeader String secretKey) {
         log.trace("create credential");
-        return credentialMapperService.convert(credentialPersistenceService.create(credentialMapperService.convert(payload)));
+        return credentialMapperService.convert(credentialPersistenceService.create(credentialMapperService.convert(payload), secretKey));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
         log.trace("delete credential where id " + id);
         credentialPersistenceService.delete(id);
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@ModelAttribute CredentialPayload payload) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@ModelAttribute CredentialPayload payload,
+                       @RequestHeader String secretKey) {
         log.trace("delete credentials where filter is " + payload);
         credentialPersistenceService.delete(credentialMapperService.getFilter(payload));
     }

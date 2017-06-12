@@ -2,6 +2,7 @@ package com.ote.keystore.credential;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.cryptor.CryptorService;
 import com.ote.keystore.exceptionhandler.BeanInvalidationResult;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -29,6 +30,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 public class CredentialRestControllerTest {
 
+    private final static String SECRET_KEY = "forTest";
+
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -36,6 +39,9 @@ public class CredentialRestControllerTest {
 
     @Autowired
     private CredentialRepositoryMock credentialRepositoryMock;
+
+    @Autowired
+    private CryptorService cryptorService;
 
     @Before
     public void setup() throws Exception {
@@ -57,14 +63,18 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+        // NB : payload will be updated and encrypted
+        mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone())));
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0")).andReturn();
 
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
         payload.setId(0);
-        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload));
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(cryptorService.encrypt(SECRET_KEY, payload)));
         assertions.assertAll();
     }
 
@@ -90,12 +100,15 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        MvcResult result = mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+        MvcResult result = mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone()))).andReturn();
 
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
         payload.setId(0);
-        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload));
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(cryptorService.encrypt(SECRET_KEY, payload)));
         assertions.assertAll();
     }
 
@@ -108,7 +121,11 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        MvcResult result = mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+        MvcResult result = mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone()))).
+                andReturn();
 
         BeanInvalidationResult expected = new BeanInvalidationResult();
         expected.setTarget(payload);
@@ -145,11 +162,15 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+        mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone()))).
+                andReturn();
 
         MvcResult result = mockMvc.perform(delete("/v1/keys/credentials/0")).andReturn();
 
-        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
     //endregion
 
@@ -163,7 +184,11 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+        MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone()))).
+                andReturn();
 
         Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
@@ -177,7 +202,11 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        MvcResult result = mockMvc.perform(patch("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload))).andReturn();
+        MvcResult result = mockMvc.perform(patch("/v1/keys/credentials/0").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone()))).
+                andReturn();
 
         Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
@@ -191,20 +220,26 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload)));
+        mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone())));
 
         CredentialPayload payload2 = new CredentialPayload();
         payload2.setId(0);
         payload2.setLogin("newLoginTest");
         payload2.setPassword("newPasswordTest");
 
-        mockMvc.perform(put("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload2)));
+        mockMvc.perform(put("/v1/keys/credentials/0").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload2.clone())));
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0")).andReturn();
 
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload2));
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(cryptorService.encrypt(SECRET_KEY, payload2)));
         assertions.assertAll();
     }
 
@@ -217,14 +252,20 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload)));
+        mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone())));
 
         CredentialPayload payload2 = new CredentialPayload();
         payload2.setId(0);
         payload2.setLogin("newLoginTest");
         payload2.setPassword("newPasswordTest");
 
-        mockMvc.perform(patch("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload2)));
+        mockMvc.perform(patch("/v1/keys/credentials/0").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload2.clone())));
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0")).andReturn();
 
@@ -232,10 +273,10 @@ public class CredentialRestControllerTest {
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
 
         payload.setId(0);
-        payload.setLogin("newLoginTest");
-        payload.setPassword("newPasswordTest");
+        payload.setLogin(payload2.getLogin());
+        payload.setPassword(payload2.getPassword());
 
-        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload));
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(cryptorService.encrypt(SECRET_KEY, payload)));
         assertions.assertAll();
     }
 
@@ -248,14 +289,20 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
-        mockMvc.perform(post("/v1/keys/credentials").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload)));
+        mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload.clone())));
 
         CredentialPayload payload2 = new CredentialPayload();
         payload2.setId(0);
         payload2.setLogin("newLoginTest");
         payload2.setPassword(null); // invalid
 
-        MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").contentType(MediaType.APPLICATION_JSON_VALUE).content(serializeToJson(payload2))).andReturn();
+        MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload2.clone()))).andReturn();
 
         BeanInvalidationResult expected = new BeanInvalidationResult();
         expected.setTarget(payload2);
@@ -264,18 +311,19 @@ public class CredentialRestControllerTest {
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertions.assertThat(result.getResponse().getContentAsString()).isNotNull();
-        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(expected));
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(cryptorService.encrypt(SECRET_KEY, expected)));
 
         System.out.println(result.getResponse().getContentAsString());
         assertions.assertAll();
     }
 
+
     //endregion
 
-/*    public static <T> T parseFromJson(String CredentialPayloadAsJson, Class<T> clazz) throws IOException {
+    public static <T> T parseFromJson(String CredentialPayloadAsJson, Class<T> clazz) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(CredentialPayloadAsJson, clazz);
-    }*/
+    }
 
     public static <T> String serializeToJson(T CredentialPayloadAsJson) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
