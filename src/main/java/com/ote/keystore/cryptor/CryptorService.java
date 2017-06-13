@@ -12,7 +12,7 @@ public class CryptorService {
 
     public static final String ALGORITHM = "AES";
 
-    public <T> T encrypt(@Key128Bits String key, T object) throws EncryptException {
+    public <T> T encrypt(@SecretKey String key, T object) throws EncryptException {
 
         try {
             SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
@@ -37,7 +37,7 @@ public class CryptorService {
         }
     }
 
-    public <T> T decrypt(@Key128Bits String key, T object) throws DecryptException {
+    public <T> T decrypt(@SecretKey String key, T object) throws DecryptException {
 
         try {
             SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);

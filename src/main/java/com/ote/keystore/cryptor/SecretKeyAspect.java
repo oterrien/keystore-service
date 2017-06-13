@@ -1,20 +1,34 @@
 package com.ote.keystore.cryptor;
 
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * This Aspect aims to make @SecretKey parameters compatible with encrypting algorithm (number of bits)
+ * The @SecretKey parameter is changed thanks to secretKeyService
+ * Other parameters are not touched
+ * Orign method is finally called with updated parameters
+ */
+@Component
+@Slf4j
 @Aspect
-public class Key128BitsAspect {
+public class SecretKeyAspect {
 
-    @Around("execution(* *(.., @com.ote.keystore.cryptor.Key128Bits (*), ..))")
+    @Autowired
+    private SecretKeyService secretKeyService;
+
+    @Around("execution(* *(.., @com.ote.keystore.cryptor.SecretKey (*), ..))")
     public Object execute(ProceedingJoinPoint point) throws Throwable {
 
         MethodSignature signature = (MethodSignature) point.getSignature();
@@ -24,16 +38,15 @@ public class Key128BitsAspect {
                 mapToObj(i -> getParameter(method.getParameters()[i], point.getArgs()[i])).
                 collect(Collectors.toList()).
                 toArray();
+
         return point.proceed(newParameters);
     }
 
     private Object getParameter(Parameter parameter, Object parameterValue) {
-        if (parameter.isAnnotationPresent(Key128Bits.class) && parameter.getType().equals(String.class)) {
-            return StringUtils.rightPad((String) parameterValue, 16, "X"); // 128 bits
+        if (parameter.isAnnotationPresent(SecretKey.class)) {
+            return secretKeyService.getSecretKey((String) parameterValue);
         } else {
             return parameterValue;
         }
     }
-
-
 }

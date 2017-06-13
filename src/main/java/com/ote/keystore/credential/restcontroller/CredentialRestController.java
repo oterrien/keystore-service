@@ -46,8 +46,7 @@ public class CredentialRestController {
                                         @RequestParam(required = false) String sortingBy,
                                         @RequestParam(required = false, defaultValue = "ASC") String sortingDirection,
                                         @RequestParam(required = false, defaultValue = "${page.default.size}") int pageSize,
-                                        @RequestParam(required = false, defaultValue = "0") int pageIndex,
-                                        @RequestHeader String secretKey) {
+                                        @RequestParam(required = false, defaultValue = "0") int pageIndex) {
 
         log.trace("get credentials where filter is " + payloadFilter);
         Specification<CredentialEntity> filter = credentialMapperService.getFilter(payloadFilter);
@@ -93,8 +92,7 @@ public class CredentialRestController {
 
     @RequestMapping(value = "", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@ModelAttribute CredentialPayload payload,
-                       @RequestHeader String secretKey) {
+    public void delete(@ModelAttribute CredentialPayload payload) {
         log.trace("delete credentials where filter is " + payload);
         credentialPersistenceService.delete(credentialMapperService.getFilter(payload));
     }
