@@ -2,6 +2,7 @@ package com.ote.keystore.credential.mapper;
 
 import com.ote.keystore.credential.model.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
+import com.ote.keystore.trace.annotation.Traceable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,7 @@ import java.util.List;
 @Service
 public class CredentialMapperService {
 
+    @Traceable(level = Traceable.Level.TRACE)
     public CredentialPayload convert(CredentialEntity entity) {
 
         CredentialPayload payload = new CredentialPayload();
@@ -27,6 +29,7 @@ public class CredentialMapperService {
         return payload;
     }
 
+    @Traceable(level = Traceable.Level.TRACE)
     public CredentialEntity convert(CredentialPayload payload) {
 
         CredentialEntity entity = new CredentialEntity();
@@ -38,6 +41,7 @@ public class CredentialMapperService {
         return entity;
     }
 
+    @Traceable(level = Traceable.Level.TRACE)
     private Sort getSort(String sortingBy, String sortingDirection) {
 
         Sort.Order orderByPrimaryKeyAsc = new Sort.Order(Sort.Direction.ASC, "id");
@@ -57,11 +61,13 @@ public class CredentialMapperService {
         return new Sort(orderByPropertyAndDirection, orderByPrimaryKeyAsc);
     }
 
+    @Traceable(level = Traceable.Level.TRACE)
     public Pageable getPageRequest(String sortingBy, String sortingDirection, int pageSize, int pageIndex) {
 
         return new PageRequest(pageIndex, pageSize, getSort(sortingBy, sortingDirection));
     }
 
+    @Traceable(level = Traceable.Level.TRACE)
     public Specification<CredentialEntity> getFilter(CredentialPayload filter) {
 
         return (root, criteriaQuery, criteriaBuilder) -> {

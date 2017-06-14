@@ -1,6 +1,7 @@
 package com.ote.keystore.cryptor;
 
 import com.ote.keystore.credential.persistence.CredentialEntity;
+import com.ote.keystore.cryptor.service.CryptorService;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;

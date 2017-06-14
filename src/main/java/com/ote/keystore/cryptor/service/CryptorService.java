@@ -1,5 +1,8 @@
-package com.ote.keystore.cryptor;
+package com.ote.keystore.cryptor.service;
 
+import com.ote.keystore.cryptor.annotation.Crypted;
+import com.ote.keystore.cryptor.annotation.SecretKey;
+import com.ote.keystore.trace.annotation.Traceable;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,7 @@ public class CryptorService {
 
     public static final String ALGORITHM = "AES";
 
+    @Traceable(level = Traceable.Level.TRACE)
     public <T> T encrypt(@SecretKey String key, T object) throws EncryptException {
 
         try {
@@ -37,6 +41,7 @@ public class CryptorService {
         }
     }
 
+    @Traceable(level = Traceable.Level.TRACE)
     public <T> T decrypt(@SecretKey String key, T object) throws DecryptException {
 
         try {

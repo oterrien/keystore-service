@@ -1,7 +1,7 @@
 logging:
   level:
     org.springframework.web: WARN
-    com.ote.github.api: INFO
+    com.ote.keystore: TRACE
 
 server:
   port: ${PORT:8080}

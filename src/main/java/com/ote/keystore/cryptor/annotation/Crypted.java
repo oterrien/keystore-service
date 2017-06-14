@@ -1,4 +1,4 @@
-package com.ote.keystore.cryptor;
+package com.ote.keystore.cryptor.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

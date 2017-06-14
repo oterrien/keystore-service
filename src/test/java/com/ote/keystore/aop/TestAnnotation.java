@@ -1,9 +1,10 @@
-package com.ote.keystore.cryptor;
+package com.ote.keystore.aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Function;
 
 /**
  * This annotation aims to specify which parameter has to be encypted
@@ -11,8 +12,7 @@ import java.lang.annotation.Target;
  * In the most of time, #secretKey would refer to the parameter secretKey of the same method
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Encrypt {
+@Target(ElementType.METHOD)
+public @interface TestAnnotation {
 
-    String value();
 }

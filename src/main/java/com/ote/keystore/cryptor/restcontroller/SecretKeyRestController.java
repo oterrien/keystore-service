@@ -1,6 +1,6 @@
-package com.ote.keystore.credential.restcontroller;
+package com.ote.keystore.cryptor.restcontroller;
 
-import com.ote.keystore.cryptor.SecretKeyService;
+import com.ote.keystore.cryptor.service.SecretKeyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

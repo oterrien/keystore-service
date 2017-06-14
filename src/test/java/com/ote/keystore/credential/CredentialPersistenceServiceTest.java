@@ -3,7 +3,7 @@ package com.ote.keystore.credential;
 import com.ote.keystore.credential.model.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import com.ote.keystore.credential.persistence.CredentialPersistenceService;
-import com.ote.keystore.cryptor.CryptorService;
+import com.ote.keystore.cryptor.service.CryptorService;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Ignore;

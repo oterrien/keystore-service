@@ -2,7 +2,7 @@ package com.ote.keystore.credential;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ote.keystore.credential.model.CredentialPayload;
-import com.ote.keystore.cryptor.CryptorService;
+import com.ote.keystore.cryptor.service.CryptorService;
 import com.ote.keystore.exceptionhandler.BeanInvalidationResult;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;

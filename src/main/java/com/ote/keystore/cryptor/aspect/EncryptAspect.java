@@ -1,5 +1,7 @@
-package com.ote.keystore.cryptor;
+package com.ote.keystore.cryptor.aspect;
 
+import com.ote.keystore.cryptor.service.CryptorService;
+import com.ote.keystore.cryptor.annotation.Encrypt;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,6 +15,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -31,11 +34,12 @@ public class EncryptAspect {
     @Autowired
     private CryptorService cryptorService;
 
-    protected EncryptAspect(CryptorService cryptorService) {
-        this.cryptorService = cryptorService;
+    @PostConstruct
+    public void init(){
+        log.warn("### EncryptAspect is loaded");
     }
 
-    @Around("execution(* *(.., @com.ote.keystore.cryptor.Encrypt (*), ..))")
+    @Around("execution(* *(.., @com.ote.keystore.cryptor.annotation.Encrypt (*), ..))")
     public Object execute(ProceedingJoinPoint point) throws Throwable {
 
         MethodSignature signature = (MethodSignature) point.getSignature();

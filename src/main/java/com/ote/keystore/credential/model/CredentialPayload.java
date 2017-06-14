@@ -1,6 +1,6 @@
 package com.ote.keystore.credential.model;
 
-import com.ote.keystore.cryptor.Crypted;
+import com.ote.keystore.cryptor.annotation.Crypted;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

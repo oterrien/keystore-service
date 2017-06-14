@@ -1,7 +1,6 @@
 package com.ote.keystore.credential.persistence;
 
-import com.ote.keystore.credential.model.CredentialPayload;
-import com.ote.keystore.cryptor.Crypted;
+import com.ote.keystore.cryptor.annotation.Crypted;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
