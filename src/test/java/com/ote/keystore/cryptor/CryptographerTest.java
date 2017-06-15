@@ -41,10 +41,16 @@ public class CryptographerTest {
 
 
     @Test
-    public void encrypt_same_value_should_result_same_value() {
+    public void encrypt_same_value_should_result_same_value() throws Exception{
 
-        String test = "newTest";
-        Assertions.assertThat(cryptorService.encrypt(SECRET_KEY, test)).isEqualTo(cryptorService.encrypt(SECRET_KEY, test));
+        CredentialEntity entity = new CredentialEntity();
+        entity.setId(0);
+        entity.setLogin("newLogin");
+        entity.setPassword("newPassword");
+        entity.setApplication("newApplication");
+        entity.setDescription("newDescription");
+
+        Assertions.assertThat(cryptorService.encrypt(SECRET_KEY, entity.clone())).isEqualTo(cryptorService.encrypt(SECRET_KEY, entity.clone()));
     }
 
 }

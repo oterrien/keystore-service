@@ -11,7 +11,7 @@ public class SecretKeyService {
 
     private static final int secretKeyDefaultBits = 128;
 
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public String getSecretKey(String secretKey) {
         int size = secretKeyDefaultBits / 8;
         return StringUtils.rightPad(secretKey, size, secretKeyDefaultPadChar);
