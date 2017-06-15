@@ -35,7 +35,7 @@ public class SecretKeyAspect {
         log.warn("### SecretKeyAspect is loaded");
     }
 
-    @Around("execution(* *(.., @com.ote.keystore.cryptor.annotation.SecretKey (*), ..))")
+    @Around("execution(* *(.., @com.ote.keystore.cryptor.annotation.SecretKey (java.lang.String), ..))")
     public Object execute(ProceedingJoinPoint point) throws Throwable {
 
         MethodSignature signature = (MethodSignature) point.getSignature();

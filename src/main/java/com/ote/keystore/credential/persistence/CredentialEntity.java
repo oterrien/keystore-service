@@ -1,5 +1,6 @@
 package com.ote.keystore.credential.persistence;
 
+import com.ote.keystore.cryptor.Cryptable;
 import com.ote.keystore.cryptor.annotation.Crypted;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "T_CREDENTIAL")
 @Data
 @NoArgsConstructor
-public class CredentialEntity implements Cloneable {
+public class CredentialEntity implements Cloneable, Cryptable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "tab")
@@ -33,6 +34,9 @@ public class CredentialEntity implements Cloneable {
     @Column(name = "DESCRIPTION")
     @Crypted
     private String description;
+
+    @Column(name = "IS_ENCRYPTED")
+    private boolean isEncrypted;
 
     @Override
     public CredentialEntity clone() throws CloneNotSupportedException {

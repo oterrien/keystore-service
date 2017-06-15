@@ -24,25 +24,25 @@ public class CredentialPersistenceService {
 
     //region read
     @Transactional(readOnly = true)
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public long count() {
         return credentialRepository.count();
     }
 
     @Transactional(readOnly = true)
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public long count(Specification<CredentialEntity> filter) {
         return credentialRepository.count(filter);
     }
 
     @Transactional(readOnly = true)
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public boolean exists(Integer id) {
         return credentialRepository.exists(id);
     }
 
     @Transactional(readOnly = true)
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public CredentialEntity find(Integer id) {
         CredentialEntity entity = credentialRepository.findOne(id);
         if (entity == null) {
@@ -52,23 +52,23 @@ public class CredentialPersistenceService {
     }
 
     @Transactional(readOnly = true)
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public Page<CredentialEntity> find(Specification<CredentialEntity> filter, Pageable pageRequest) {
         return credentialRepository.findAll(filter, pageRequest);
     }
     //endregion
 
     // region create
-    @Traceable(level = Traceable.Level.DEBUG)
-    public CredentialEntity create(@Encrypt("#secretKey") CredentialEntity entity, String secretKey) {
+    @Traceable(level = Traceable.Level.TRACE)
+    public CredentialEntity create(@Encrypt(secretKey = "#secretKey") CredentialEntity entity, String secretKey) {
         entity.setId(null);
         return credentialRepository.save(entity);
     }
     //endregion
 
     //region update
-    @Traceable(level = Traceable.Level.DEBUG)
-    public CredentialEntity reset(Integer id, @Encrypt("#secretKey") CredentialEntity entity, String secretKey) {
+    @Traceable(level = Traceable.Level.TRACE)
+    public CredentialEntity reset(Integer id, @Encrypt(secretKey = "#secretKey") CredentialEntity entity, String secretKey) {
 
         if (!exists(id)) {
             throw new NotFoundException(id);
@@ -77,8 +77,8 @@ public class CredentialPersistenceService {
         return credentialRepository.save(entity);
     }
 
-    @Traceable(level = Traceable.Level.DEBUG)
-    public CredentialEntity merge(Integer id, @Encrypt("#secretKey") CredentialEntity partialEntity, String secretKey) {
+    @Traceable(level = Traceable.Level.TRACE)
+    public CredentialEntity merge(Integer id, @Encrypt(secretKey = "#secretKey") CredentialEntity partialEntity, String secretKey) {
 
         CredentialEntity entity = find(id);
         if (entity == null) {
@@ -97,7 +97,7 @@ public class CredentialPersistenceService {
     //endregion
 
     //region delete
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public void delete(Integer id) {
         if (!exists(id)) {
             throw new NotFoundException(id);
@@ -105,7 +105,7 @@ public class CredentialPersistenceService {
         credentialRepository.delete(id);
     }
 
-    @Traceable(level = Traceable.Level.DEBUG)
+    @Traceable(level = Traceable.Level.TRACE)
     public void delete(Specification<CredentialEntity> filter) {
         credentialRepository.deleteInBatch(credentialRepository.findAll(filter));
     }

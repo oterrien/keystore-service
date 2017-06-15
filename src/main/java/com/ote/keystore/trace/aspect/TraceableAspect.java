@@ -7,9 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.DeclarePrecedence;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -18,11 +21,12 @@ import java.lang.reflect.Method;
 @Component
 @Slf4j
 @Aspect
+@Order(0) // In order to set precedence of TraceableAspect before all others
 public class TraceableAspect {
 
     @PostConstruct
     public void init(){
-        log.warn("### TraceableAspect is loaded");
+        log.warn("### TraceableAspect is loaded with high Priority");
     }
 
     @Around("execution(@com.ote.keystore.trace.annotation.Traceable * *(..))")
@@ -42,6 +46,7 @@ public class TraceableAspect {
     }
 
     private Object executeWithTrace(ProceedingJoinPoint point, Logger logger, Traceable.Level level) throws Throwable {
+
         long start = System.currentTimeMillis();
         long count = Counter.nextValue();
 

@@ -26,6 +26,7 @@ public class CredentialMapperService {
         payload.setPassword(entity.getPassword());
         payload.setApplication(entity.getApplication());
         payload.setDescription(entity.getDescription());
+        payload.setEncrypted(entity.isEncrypted());
         return payload;
     }
 
@@ -38,6 +39,7 @@ public class CredentialMapperService {
         entity.setPassword(payload.getPassword());
         entity.setApplication(payload.getApplication());
         entity.setDescription(payload.getDescription());
+        entity.setEncrypted(payload.isEncrypted());
         return entity;
     }
 
