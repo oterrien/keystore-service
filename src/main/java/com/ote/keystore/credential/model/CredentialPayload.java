@@ -29,7 +29,6 @@ public class CredentialPayload implements Cloneable, Cryptable {
     @Crypted
     private String description;
 
-    @JsonIgnore
     private boolean isEncrypted;
 
     @Override
