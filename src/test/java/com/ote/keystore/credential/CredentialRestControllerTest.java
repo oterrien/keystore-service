@@ -1,7 +1,7 @@
 package com.ote.keystore.credential;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.cryptor.service.CryptorService;
 import com.ote.keystore.exceptionhandler.BeanInvalidationResult;
 import org.assertj.core.api.Assertions;
@@ -67,7 +67,7 @@ public class CredentialRestControllerTest {
         mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone())));
+                content(serializeToJson(payload)));
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0").header("secretKey", SECRET_KEY)).andReturn();
 
@@ -103,7 +103,7 @@ public class CredentialRestControllerTest {
         MvcResult result = mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone()))).andReturn();
+                content(serializeToJson(payload))).andReturn();
 
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -124,7 +124,7 @@ public class CredentialRestControllerTest {
         MvcResult result = mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone()))).
+                content(serializeToJson(payload))).
                 andReturn();
 
         BeanInvalidationResult expected = new BeanInvalidationResult();
@@ -165,7 +165,7 @@ public class CredentialRestControllerTest {
         mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone()))).
+                content(serializeToJson(payload))).
                 andReturn();
 
         MvcResult result = mockMvc.perform(delete("/v1/keys/credentials/0")).andReturn();
@@ -187,7 +187,7 @@ public class CredentialRestControllerTest {
         MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone()))).
+                content(serializeToJson(payload))).
                 andReturn();
 
         Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
@@ -205,7 +205,7 @@ public class CredentialRestControllerTest {
         MvcResult result = mockMvc.perform(patch("/v1/keys/credentials/0").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone()))).
+                content(serializeToJson(payload))).
                 andReturn();
 
         Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
@@ -223,7 +223,7 @@ public class CredentialRestControllerTest {
         mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone())));
+                content(serializeToJson(payload)));
 
         CredentialPayload payload2 = new CredentialPayload();
         payload2.setId(0);
@@ -233,7 +233,7 @@ public class CredentialRestControllerTest {
         mockMvc.perform(put("/v1/keys/credentials/0").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload2.clone())));
+                content(serializeToJson(payload2)));
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0").header("secretKey", SECRET_KEY)).andReturn();
 
@@ -255,7 +255,7 @@ public class CredentialRestControllerTest {
         mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone())));
+                content(serializeToJson(payload)));
 
         CredentialPayload payload2 = new CredentialPayload();
         payload2.setId(0);
@@ -265,7 +265,7 @@ public class CredentialRestControllerTest {
         mockMvc.perform(patch("/v1/keys/credentials/0").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload2.clone())));
+                content(serializeToJson(payload2)));
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0").header("secretKey", SECRET_KEY)).andReturn();
 
@@ -292,7 +292,7 @@ public class CredentialRestControllerTest {
         mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload.clone())));
+                content(serializeToJson(payload)));
 
         CredentialPayload payload2 = new CredentialPayload();
         payload2.setId(0);
@@ -302,7 +302,7 @@ public class CredentialRestControllerTest {
         MvcResult result = mockMvc.perform(put("/v1/keys/credentials/0").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                content(serializeToJson(payload2.clone()))).andReturn();
+                content(serializeToJson(payload2))).andReturn();
 
         BeanInvalidationResult expected = new BeanInvalidationResult();
         expected.setTarget(payload2);

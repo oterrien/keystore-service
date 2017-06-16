@@ -1,7 +1,7 @@
 package com.ote.keystore.credential.restcontroller;
 
 import com.ote.keystore.credential.mapper.CredentialMapperService;
-import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import com.ote.keystore.credential.persistence.CredentialPersistenceService;
 import com.ote.keystore.cryptor.annotation.Decrypt;

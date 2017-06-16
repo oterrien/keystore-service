@@ -1,6 +1,6 @@
 package com.ote.keystore.credential;
 
-import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import com.ote.keystore.credential.persistence.CredentialPersistenceService;
 import com.ote.keystore.cryptor.service.CryptorService;
@@ -168,17 +168,4 @@ public class CredentialPersistenceServiceTest {
         Assertions.fail("CredentialPersistenceService.NotFoundException should be raised");
     }
     // endregion
-
-    @Ignore
-    @Test
-    public void generateInsertEncrypted() {
-
-        CredentialPayload payload = new CredentialPayload();
-        payload.setLogin("loginTest");
-        payload.setPassword("passwordTest");
-        payload.setApplication("applicationTest");
-        payload.setDescription("descriptionTest");
-
-        System.out.println(cryptorService.encrypt(SECRET_KEY, payload));
-    }
 }

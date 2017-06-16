@@ -50,7 +50,7 @@ public class CryptographerTest {
         entity.setApplication("newApplication");
         entity.setDescription("newDescription");
 
-        Assertions.assertThat(cryptorService.encrypt(SECRET_KEY, entity.clone())).isEqualTo(cryptorService.encrypt(SECRET_KEY, entity.clone()));
+        Assertions.assertThat(cryptorService.encrypt(SECRET_KEY, entity)).isEqualTo(cryptorService.encrypt(SECRET_KEY, entity));
     }
 
 }

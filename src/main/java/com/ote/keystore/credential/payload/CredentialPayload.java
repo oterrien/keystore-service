@@ -1,17 +1,13 @@
-package com.ote.keystore.credential.model;
+package com.ote.keystore.credential.payload;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ote.keystore.cryptor.Cryptable;
 import com.ote.keystore.cryptor.annotation.Crypted;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class CredentialPayload implements Cloneable, Cryptable {
+public class CredentialPayload implements Cryptable {
 
     private Integer id;
 
@@ -30,9 +26,4 @@ public class CredentialPayload implements Cloneable, Cryptable {
     private String description;
 
     private boolean isEncrypted;
-
-    @Override
-    public CredentialPayload clone() throws CloneNotSupportedException {
-        return (CredentialPayload) super.clone();
-    }
 }

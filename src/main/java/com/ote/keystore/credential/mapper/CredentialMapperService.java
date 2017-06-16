@@ -1,6 +1,6 @@
 package com.ote.keystore.credential.mapper;
 
-import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import com.ote.keystore.trace.annotation.Traceable;
 import org.springframework.data.domain.PageRequest;

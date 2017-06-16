@@ -1,7 +1,7 @@
 package com.ote.keystore.credential;
 
 import com.ote.keystore.credential.mapper.CredentialMapperService;
-import com.ote.keystore.credential.model.CredentialPayload;
+import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;

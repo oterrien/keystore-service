@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "T_CREDENTIAL")
 @Data
 @NoArgsConstructor
-public class CredentialEntity implements Cloneable, Cryptable{
+public class CredentialEntity implements Cryptable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "tab")
@@ -19,7 +19,7 @@ public class CredentialEntity implements Cloneable, Cryptable{
     @Column(name = "ID")
     private Integer id;
 
-    @Column(name = "LOGIN")
+    @Column(name = "LOGIN", length = 32)
     @Crypted
     private String login;
 
@@ -31,15 +31,10 @@ public class CredentialEntity implements Cloneable, Cryptable{
     @Crypted
     private String application;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 4000)
     @Crypted
     private String description;
 
     @Column(name = "IS_ENCRYPTED")
     private boolean isEncrypted;
-
-    @Override
-    public CredentialEntity clone() throws CloneNotSupportedException {
-        return (CredentialEntity) super.clone();
-    }
 }
