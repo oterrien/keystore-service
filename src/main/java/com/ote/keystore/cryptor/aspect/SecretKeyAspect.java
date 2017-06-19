@@ -1,7 +1,7 @@
 package com.ote.keystore.cryptor.aspect;
 
-import com.ote.keystore.cryptor.service.SecretKeyService;
 import com.ote.keystore.cryptor.annotation.SecretKey;
+import com.ote.keystore.cryptor.service.SecretKeyService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -31,7 +31,7 @@ public class SecretKeyAspect {
     private SecretKeyService secretKeyService;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         log.warn("### SecretKeyAspect is loaded");
     }
 
@@ -50,7 +50,7 @@ public class SecretKeyAspect {
     }
 
     private Object getParameter(Parameter parameter, Object parameterValue) {
-        if (parameter.isAnnotationPresent(SecretKey.class)) {
+        if (parameter.isAnnotationPresent(SecretKey.class) && parameterValue != null) {
             return secretKeyService.getSecretKey((String) parameterValue);
         } else {
             return parameterValue;

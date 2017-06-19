@@ -52,7 +52,7 @@ public class EncryptAspect {
 
     private Object getParameter(Parameter parameter, Object parameterValue, String parameterName, Function<String, String> secretKeyValueProvider) {
 
-        if (parameter.isAnnotationPresent(Encrypt.class)) {
+        if (parameter.isAnnotationPresent(Encrypt.class) && parameterValue != null) {
             log.trace("Trying to encrypt the parameter " + parameterName);
             if (parameterValue instanceof Cryptable) {
                 Cryptable parameterToBeEncryptedValue = (Cryptable) parameterValue;

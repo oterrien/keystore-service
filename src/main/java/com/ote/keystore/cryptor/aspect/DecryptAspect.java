@@ -39,7 +39,9 @@ public class DecryptAspect {
         Decrypt.IDecrypter converter = decryptAnnotation.decrypter().getDeclaredConstructor(String.class).newInstance(secretKeyValue);
         Decrypt.IUpdater updater = decryptAnnotation.updater().newInstance();
 
-        return updater.update(point.proceed(), converter);
+        Object result = point.proceed();
+
+        return result != null ? updater.update(result, converter) : null;
     }
 
 

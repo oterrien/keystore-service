@@ -40,6 +40,7 @@ public class CredentialRestController {
     @Autowired
     private PageMapperService pageMapperService;
 
+    // region UPDATE
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -68,7 +69,9 @@ public class CredentialRestController {
         Pageable pageRequest = credentialMapperService.getPageRequest(sortingBy, sortingDirection, pageSize, pageIndex);
         return pageMapperService.convertTo(credentialPersistenceService.find(filter, pageRequest).map(p -> credentialMapperService.convert(p)));
     }
+    // endregion
 
+    // region UPDATE
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -90,7 +93,9 @@ public class CredentialRestController {
         log.trace("update credential where id " + id);
         return credentialMapperService.convert(credentialPersistenceService.merge(id, credentialMapperService.convert(payload), secretKey));
     }
+    // endregion
 
+    // region CREATE
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -100,7 +105,9 @@ public class CredentialRestController {
         log.trace("create credential");
         return credentialMapperService.convert(credentialPersistenceService.create(credentialMapperService.convert(payload), secretKey));
     }
+    // endregion
 
+    // region DELETE
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Traceable(level = Traceable.Level.TRACE)
@@ -121,4 +128,5 @@ public class CredentialRestController {
         Specification<CredentialEntity> filter = credentialMapperService.getFilter(payloadFilter);
         credentialPersistenceService.delete(filter);
     }
+    // endregion
 }
