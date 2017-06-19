@@ -59,4 +59,13 @@ public class GlobalRestControllerAdvice {
         log.error(e.getMessage(), e);
         return e.getMessage();
     }
+
+    @ExceptionHandler(CryptorService.DecryptException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    @Traceable(level = Traceable.Level.ERROR)
+    public String handle(CryptorService.DecryptException e) {
+        log.error(e.getMessage(), e);
+        return e.getMessage();
+    }
 }

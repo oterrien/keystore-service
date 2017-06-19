@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "T_CREDENTIAL")
 @Data
 @NoArgsConstructor
-public class CredentialEntity implements Cryptable{
+public class CredentialEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "tab")
@@ -20,21 +20,14 @@ public class CredentialEntity implements Cryptable{
     private Integer id;
 
     @Column(name = "LOGIN", length = 32)
-    @Crypted
     private String login;
 
     @Column(name = "PASSWORD")
-    @Crypted
     private String password;
 
     @Column(name = "APPLICATION")
-    @Crypted
     private String application;
 
     @Column(name = "DESCRIPTION", length = 4000)
-    @Crypted
     private String description;
-
-    @Column(name = "IS_ENCRYPTED")
-    private boolean isEncrypted;
 }

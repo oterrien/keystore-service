@@ -1,30 +1,28 @@
 package com.ote.keystore.cryptor.restcontroller;
 
-import com.ote.keystore.cryptor.service.SecretKeyService;
+import com.ote.keystore.trace.annotation.Traceable;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * This RestController aims to format secretKey with a common way
-  */
 @RestController
-@RequestMapping("/v1/secretKeys")
+@RequestMapping("/v1/keys/")
 @Slf4j
 public class SecretKeyRestController {
 
-    @Autowired
-    private SecretKeyService secretKeyService;
+    // password par défaut (changeit) --> encodé en SHA256
 
-    /**
-     * When front-end would like to encrypt something, this endpoint aims to format the given secretKey
-     * @param secretKey
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/{secretKey}")
+    // Connect : encoder automatiquement le password reçu en SHA256 et comparer avec la valeur SHA256 de la base
+    // Si la valeur reçu est correct alors la secretKey reçu peut être utilisée pour encoder/décoder
+
+    // create password --> encode password en
+
+    @RequestMapping(value = "/{secretKey}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public String transformSecretKey(@PathVariable String secretKey) {
-        return secretKeyService.getSecretKey(secretKey);
+    @ResponseBody
+    @Traceable(level = Traceable.Level.TRACE)
+    public void updateSecretKey(@PathVariable String secretKey) {
+        log.trace("update secretKey");
     }
 }

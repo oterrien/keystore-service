@@ -40,7 +40,7 @@ public class EncryptAspect {
         MethodSignature signature = (MethodSignature) point.getSignature();
         Method method = signature.getMethod();
 
-        Function<String, String> secretKeyValueProvider = new SecretKeyValueProvider(point).getValue();
+        Function<String, String> secretKeyValueProvider = new SecretKeyValueSpelParser(point).getValue();
 
         Object[] newParameters = IntStream.range(0, method.getParameters().length).
                 mapToObj(i -> getParameter(method.getParameters()[i], point.getArgs()[i], signature.getParameterNames()[i], secretKeyValueProvider)).
@@ -62,7 +62,7 @@ public class EncryptAspect {
                     Encrypt encryptAnnotation = parameter.getAnnotation(Encrypt.class);
                     String secretKeyParameter = encryptAnnotation.secretKey();
                     String secretKeyValue = secretKeyValueProvider.apply(secretKeyParameter);
-                    return cryptorService.encrypt(secretKeyValue, parameterToBeEncryptedValue);
+                    return cryptorService.encrypt(parameterToBeEncryptedValue, secretKeyValue);
                 }
             } else {
                 throw new CryptorService.EncryptException("Parameter " + parameterName + " has to implement " + Cryptable.class.getName());

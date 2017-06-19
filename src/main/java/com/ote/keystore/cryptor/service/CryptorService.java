@@ -22,7 +22,7 @@ public class CryptorService {
     private static final String ALGORITHM = "AES";
 
     @Traceable(level = Traceable.Level.TRACE)
-    public <T extends Cryptable> T encrypt(@SecretKey String key, T object) throws EncryptException {
+    public <T extends Cryptable> T encrypt(T object, @SecretKey String key) throws EncryptException {
 
         if (object.isEncrypted()) {
             return object;
@@ -41,7 +41,7 @@ public class CryptorService {
     }
 
     @Traceable(level = Traceable.Level.TRACE)
-    public <T extends Cryptable> T decrypt(@SecretKey String key, T object) throws DecryptException {
+    public <T extends Cryptable> T decrypt(T object, @SecretKey String key) throws DecryptException {
 
         if (!object.isEncrypted()) {
             return object;

@@ -4,8 +4,12 @@ import com.ote.keystore.credential.mapper.CredentialMapperService;
 import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
 import com.ote.keystore.credential.persistence.CredentialPersistenceService;
+import com.ote.keystore.cryptor.annotation.Decrypt;
+import com.ote.keystore.cryptor.annotation.Encrypt;
+import com.ote.keystore.cryptor.service.CryptorServiceProvider;
 import com.ote.keystore.page.Page;
 import com.ote.keystore.page.PageMapperService;
+import com.ote.keystore.page.PageUpdater;
 import com.ote.keystore.trace.annotation.Traceable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,17 +44,19 @@ public class CredentialRestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Traceable(level = Traceable.Level.INFO)
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialPayload read(@PathVariable("id") Integer id,
                                   @RequestHeader String secretKey) {
         log.trace("get credential where id " + id);
-        return credentialMapperService.convert(credentialPersistenceService.find(id, secretKey));
+        return credentialMapperService.convert(credentialPersistenceService.find(id));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Traceable(level = Traceable.Level.TRACE)
-    public Page<CredentialPayload> read(@ModelAttribute CredentialPayload payloadFilter,
+    @Decrypt(secretKey = "#secretKey", updater = PageUpdater.class, decrypter = CryptorServiceProvider.Decrypter.class)
+    public Page<CredentialPayload> read(@ModelAttribute @Encrypt(secretKey = "#secretKey") CredentialPayload payloadFilter,
                                         @RequestParam(required = false) String sortingBy,
                                         @RequestParam(required = false, defaultValue = "ASC") String sortingDirection,
                                         @RequestParam(required = false, defaultValue = "${page.default.size}") int pageSize,
@@ -68,22 +74,24 @@ public class CredentialRestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Traceable(level = Traceable.Level.TRACE)
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialPayload reset(@PathVariable("id") Integer id,
-                                   @Valid @RequestBody CredentialPayload payload,
+                                   @Valid @RequestBody @Encrypt(secretKey = "#secretKey") CredentialPayload payload,
                                    @RequestHeader String secretKey) {
         log.trace("update credential where id " + id);
-        return credentialMapperService.convert(credentialPersistenceService.reset(id, credentialMapperService.convert(payload), secretKey));
+        return credentialMapperService.convert(credentialPersistenceService.reset(id, credentialMapperService.convert(payload)));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Traceable(level = Traceable.Level.TRACE)
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialPayload patch(@PathVariable("id") Integer id,
-                                   @Valid @RequestBody CredentialPayload payload,
+                                   @Valid @RequestBody @Encrypt(secretKey = "#secretKey") CredentialPayload payload,
                                    @RequestHeader String secretKey) {
         log.trace("update credential where id " + id);
-        return credentialMapperService.convert(credentialPersistenceService.merge(id, credentialMapperService.convert(payload), secretKey));
+        return credentialMapperService.convert(credentialPersistenceService.merge(id, credentialMapperService.convert(payload)));
     }
     // endregion
 
@@ -92,10 +100,11 @@ public class CredentialRestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Traceable(level = Traceable.Level.TRACE)
-    public CredentialPayload create(@Valid @RequestBody CredentialPayload payload,
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
+    public CredentialPayload create(@Valid @RequestBody @Encrypt(secretKey = "#secretKey") CredentialPayload payload,
                                     @RequestHeader String secretKey) {
         log.trace("create credential");
-        return credentialMapperService.convert(credentialPersistenceService.create(credentialMapperService.convert(payload), secretKey));
+        return credentialMapperService.convert(credentialPersistenceService.create(credentialMapperService.convert(payload)));
     }
     // endregion
 
@@ -113,7 +122,7 @@ public class CredentialRestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Traceable(level = Traceable.Level.TRACE)
-    public void delete(@ModelAttribute CredentialPayload payloadFilter,
+    public void delete(@ModelAttribute @Encrypt(secretKey = "#secretKey") CredentialPayload payloadFilter,
                        @RequestHeader String secretKey) {
 
         log.trace("remove credentials where filter is " + payloadFilter);

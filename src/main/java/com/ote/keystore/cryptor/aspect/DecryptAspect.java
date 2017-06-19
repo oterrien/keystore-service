@@ -32,7 +32,7 @@ public class DecryptAspect {
         Method method = signature.getMethod();
         Decrypt decryptAnnotation = method.getAnnotation(Decrypt.class);
 
-        Function<String, String> secretKeyValueProvider = new SecretKeyValueProvider(point).getValue();
+        Function<String, String> secretKeyValueProvider = new SecretKeyValueSpelParser(point).getValue();
         String secretKeyParameter = decryptAnnotation.secretKey();
         String secretKeyValue = secretKeyValueProvider.apply(secretKeyParameter);
 

@@ -28,7 +28,7 @@ public class CryptorServiceProvider {
         public T convertTo(T obj) {
 
             if (obj.isEncrypted()) {
-                return getCryptorServiceInstance().decrypt(secretKey, obj);
+                return getCryptorServiceInstance().decrypt(obj, secretKey);
             } else {
                 return obj;
             }

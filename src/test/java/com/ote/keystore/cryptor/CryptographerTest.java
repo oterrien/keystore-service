@@ -1,6 +1,6 @@
 package com.ote.keystore.cryptor;
 
-import com.ote.keystore.credential.persistence.CredentialEntity;
+import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.cryptor.service.CryptorService;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -21,36 +21,39 @@ public class CryptographerTest {
     private CryptorService cryptorService;
 
     @Test
-    public void encrypting_then_decrypting_entity_with_same_secretkey_should_return_the_original_entity() throws Exception {
+    public void encrypting_then_decrypting_with_same_secretkey_should_return_the_original_entity() throws Exception {
 
-        CredentialEntity entity = new CredentialEntity();
-        entity.setId(0);
-        entity.setLogin("newLogin");
-        entity.setPassword("newPassword");
-        entity.setApplication("newApplication");
-        entity.setDescription("newDescription");
+        CredentialPayload payload = new CredentialPayload();
+        payload.setId(0);
+        payload.setLogin("newLogin");
+        payload.setPassword("newPassword");
+        payload.setApplication("newApplication");
+        payload.setDescription("newDescription");
+        payload.setEncrypted(false);
 
-        CredentialEntity entityEncrypted = cryptorService.encrypt(SECRET_KEY, entity);
+        CredentialPayload encryptedPayload = cryptorService.encrypt(payload, SECRET_KEY);
 
-        Assertions.assertThat(entityEncrypted).isNotNull();
+        Assertions.assertThat(encryptedPayload).isNotNull();
+        Assertions.assertThat(encryptedPayload.isEncrypted()).isEqualTo(true);
 
-        CredentialEntity entityDecrypted = cryptorService.decrypt(SECRET_KEY, entityEncrypted);
+        CredentialPayload decryptedPayload = cryptorService.decrypt(encryptedPayload, SECRET_KEY);
 
-        Assertions.assertThat(entityDecrypted).isEqualTo(entity);
+        Assertions.assertThat(decryptedPayload).isEqualTo(payload);
+        Assertions.assertThat(decryptedPayload.isEncrypted()).isEqualTo(false);
     }
 
 
     @Test
-    public void encrypt_same_value_should_result_same_value() throws Exception{
+    public void encrypt_same_value_should_result_same_value() throws Exception {
 
-        CredentialEntity entity = new CredentialEntity();
-        entity.setId(0);
-        entity.setLogin("newLogin");
-        entity.setPassword("newPassword");
-        entity.setApplication("newApplication");
-        entity.setDescription("newDescription");
+        CredentialPayload payload = new CredentialPayload();
+        payload.setId(0);
+        payload.setLogin("newLogin");
+        payload.setPassword("newPassword");
+        payload.setApplication("newApplication");
+        payload.setDescription("newDescription");
 
-        Assertions.assertThat(cryptorService.encrypt(SECRET_KEY, entity)).isEqualTo(cryptorService.encrypt(SECRET_KEY, entity));
+        Assertions.assertThat(cryptorService.encrypt(payload, SECRET_KEY)).isEqualTo(cryptorService.encrypt(payload, SECRET_KEY));
     }
 
 }

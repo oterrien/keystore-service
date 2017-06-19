@@ -27,7 +27,7 @@ public class CredentialMapperService {
         payload.setPassword(entity.getPassword());
         payload.setApplication(entity.getApplication());
         payload.setDescription(entity.getDescription());
-        payload.setEncrypted(entity.isEncrypted());
+        payload.setEncrypted(true); // Entity is always encrypted
         return payload;
     }
 
@@ -40,7 +40,6 @@ public class CredentialMapperService {
         entity.setPassword(payload.getPassword());
         entity.setApplication(payload.getApplication());
         entity.setDescription(payload.getDescription());
-        entity.setEncrypted(payload.isEncrypted());
         return entity;
     }
 
@@ -71,7 +70,7 @@ public class CredentialMapperService {
     }
 
     @Traceable(level = Traceable.Level.TRACE)
-    public Specification<CredentialEntity> getFilter(@Encrypt(secretKey = "#secretKey") CredentialPayload filter, String secretKey) {
+    public Specification<CredentialEntity> getFilter(CredentialPayload filter, String secretKey) {
 
         return (root, criteriaQuery, criteriaBuilder) -> {
 

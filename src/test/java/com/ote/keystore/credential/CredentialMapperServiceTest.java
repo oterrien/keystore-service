@@ -20,21 +20,23 @@ public class CredentialMapperServiceTest {
     private CredentialMapperService credentialMapperService;
 
     @Test
-    public void dual_payload_conversion_should_return_same_result(){
+    public void dual_payload_conversion_should_return_same_result() {
 
         CredentialPayload payload = new CredentialPayload();
         payload.setLogin("loginTest");
         payload.setPassword("passwordTest");
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
+        payload.setEncrypted(false);
 
         CredentialPayload result = credentialMapperService.convert(credentialMapperService.convert(payload));
+        result.setEncrypted(false);
 
-        Assertions.assertThat(result).isEqualTo(payload);
+        Assertions.assertThat(payload).isEqualTo(result);
     }
 
     @Test
-    public void dual_entity_conversion_should_return_same_result(){
+    public void dual_entity_conversion_should_return_same_result() {
 
         CredentialEntity entity = new CredentialEntity();
         entity.setLogin("loginTest");
@@ -44,6 +46,6 @@ public class CredentialMapperServiceTest {
 
         CredentialEntity result = credentialMapperService.convert(credentialMapperService.convert(entity));
 
-        Assertions.assertThat(result).isEqualTo(entity);
+        Assertions.assertThat(entity).isEqualTo(result);
     }
 }

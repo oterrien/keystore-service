@@ -12,12 +12,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
-public class SecretKeyValueProvider {
+public class SecretKeyValueSpelParser {
 
     @Getter
     private final Function<String, String> value;
 
-    public SecretKeyValueProvider(ProceedingJoinPoint point) {
+    public SecretKeyValueSpelParser(ProceedingJoinPoint point) {
 
         MethodSignature signature = (MethodSignature) point.getSignature();
         Method method = signature.getMethod();

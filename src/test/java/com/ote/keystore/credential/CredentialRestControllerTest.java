@@ -79,6 +79,26 @@ public class CredentialRestControllerTest {
     }
 
     @Test
+    public void reading_by_id_with_bad_secret_key_should_raise_decrypt_exception() throws Exception {
+
+        CredentialPayload payload = new CredentialPayload();
+        payload.setLogin("loginTest");
+        payload.setPassword("passwordTest");
+        payload.setApplication("applicationTest");
+        payload.setDescription("descriptionTest");
+
+        // NB : payload will be updated and encrypted
+        mockMvc.perform(post("/v1/keys/credentials").
+                header("secretKey", SECRET_KEY).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                content(serializeToJson(payload)));
+
+        MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0").header("secretKey", "BAD_KEY")).andReturn();
+
+        Assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo("An error occured while decrypting data");
+    }
+
+    @Test
     public void reading_by_id_should_return_not_found_when_not_exist() throws Exception {
 
         MvcResult result = mockMvc.perform(get("/v1/keys/credentials/0").header("secretKey", SECRET_KEY)).andReturn();
