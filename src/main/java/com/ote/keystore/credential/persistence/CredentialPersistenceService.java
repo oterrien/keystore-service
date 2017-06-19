@@ -1,7 +1,10 @@
 package com.ote.keystore.credential.persistence;
 
+import com.ote.keystore.cryptor.annotation.Decrypt;
 import com.ote.keystore.cryptor.annotation.Encrypt;
+import com.ote.keystore.cryptor.service.CryptorServiceProvider;
 import com.ote.keystore.merger.BeanMergerService;
+import com.ote.keystore.page.PageUpdater;
 import com.ote.keystore.trace.annotation.Traceable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +46,8 @@ public class CredentialPersistenceService {
 
     @Transactional(readOnly = true)
     @Traceable(level = Traceable.Level.TRACE)
-    public CredentialEntity find(Integer id) {
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
+    public CredentialEntity find(Integer id, String secretKey) {
         CredentialEntity entity = credentialRepository.findOne(id);
         if (entity == null) {
             throw new NotFoundException(id);
@@ -53,6 +57,7 @@ public class CredentialPersistenceService {
 
     @Transactional(readOnly = true)
     @Traceable(level = Traceable.Level.TRACE)
+    @Decrypt(secretKey = "#secretKey", updater = PageUpdater.class, decrypter = CryptorServiceProvider.Decrypter.class)
     public Page<CredentialEntity> find(Specification<CredentialEntity> filter, Pageable pageRequest) {
         return credentialRepository.findAll(filter, pageRequest);
     }
@@ -60,6 +65,7 @@ public class CredentialPersistenceService {
 
     // region create
     @Traceable(level = Traceable.Level.TRACE)
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialEntity create(@Encrypt(secretKey = "#secretKey") CredentialEntity entity, String secretKey) {
         entity.setId(null);
         return credentialRepository.save(entity);
@@ -68,6 +74,7 @@ public class CredentialPersistenceService {
 
     //region update
     @Traceable(level = Traceable.Level.TRACE)
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialEntity reset(Integer id, @Encrypt(secretKey = "#secretKey") CredentialEntity entity, String secretKey) {
 
         if (!exists(id)) {
@@ -78,9 +85,10 @@ public class CredentialPersistenceService {
     }
 
     @Traceable(level = Traceable.Level.TRACE)
-    public CredentialEntity merge(Integer id, @Encrypt(secretKey = "#secretKey") CredentialEntity partialEntity, String secretKey) {
+    @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
+    public CredentialEntity merge(Integer id, CredentialEntity partialEntity, String secretKey) {
 
-        CredentialEntity entity = find(id);
+        CredentialEntity entity = find(id, secretKey);
         if (entity == null) {
             throw new NotFoundException(id);
         }
@@ -92,7 +100,7 @@ public class CredentialPersistenceService {
             throw new NotMergeableException(id, e);
         }
 
-        return credentialRepository.save(entity);
+        return reset(id, entity, secretKey);
     }
     //endregion
 

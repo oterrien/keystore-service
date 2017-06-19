@@ -108,7 +108,7 @@ public class CredentialRestControllerTest {
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
         payload.setId(0);
-        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(cryptorService.encrypt(SECRET_KEY, payload)));
+        assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo(serializeToJson(payload));
         assertions.assertAll();
     }
 
@@ -252,13 +252,13 @@ public class CredentialRestControllerTest {
         payload.setApplication("applicationTest");
         payload.setDescription("descriptionTest");
 
+        //create
         mockMvc.perform(post("/v1/keys/credentials").
                 header("secretKey", SECRET_KEY).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
                 content(serializeToJson(payload)));
 
         CredentialPayload payload2 = new CredentialPayload();
-        payload2.setId(0);
         payload2.setLogin("newLoginTest");
         payload2.setPassword("newPasswordTest");
 

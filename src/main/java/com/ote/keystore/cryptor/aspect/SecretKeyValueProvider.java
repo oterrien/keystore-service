@@ -15,7 +15,7 @@ import java.util.function.Function;
 public class SecretKeyValueProvider {
 
     @Getter
-    private Function<String, String> value;
+    private final Function<String, String> value;
 
     public SecretKeyValueProvider(ProceedingJoinPoint point) {
 
@@ -25,12 +25,12 @@ public class SecretKeyValueProvider {
         ExpressionParser parser = new SpelExpressionParser();
         MethodBasedEvaluationContext context = new MethodBasedEvaluationContext(point.getTarget(), method, point.getArgs(), new ProceedingJoinPointParameterNameDiscoverer(point));
 
-        this.value = ((expression) -> parser.parseExpression(expression).getValue(context, String.class));
+        this.value = (expression -> parser.parseExpression(expression).getValue(context, String.class));
     }
 
     private static class ProceedingJoinPointParameterNameDiscoverer implements ParameterNameDiscoverer {
 
-        private MethodSignature signature;
+        private final MethodSignature signature;
 
         private ProceedingJoinPointParameterNameDiscoverer(ProceedingJoinPoint point) {
             this.signature = (MethodSignature) point.getSignature();

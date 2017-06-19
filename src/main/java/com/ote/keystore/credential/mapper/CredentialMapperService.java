@@ -2,6 +2,7 @@ package com.ote.keystore.credential.mapper;
 
 import com.ote.keystore.credential.payload.CredentialPayload;
 import com.ote.keystore.credential.persistence.CredentialEntity;
+import com.ote.keystore.cryptor.annotation.Encrypt;
 import com.ote.keystore.trace.annotation.Traceable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +71,7 @@ public class CredentialMapperService {
     }
 
     @Traceable(level = Traceable.Level.TRACE)
-    public Specification<CredentialEntity> getFilter(CredentialPayload filter) {
+    public Specification<CredentialEntity> getFilter(@Encrypt(secretKey = "#secretKey") CredentialPayload filter, String secretKey) {
 
         return (root, criteriaQuery, criteriaBuilder) -> {
 
