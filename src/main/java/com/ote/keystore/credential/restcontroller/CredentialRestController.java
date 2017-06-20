@@ -46,7 +46,7 @@ public class CredentialRestController {
     @Traceable(level = Traceable.Level.INFO)
     @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialPayload read(@PathVariable("id") Integer id,
-                                  @RequestHeader String secretKey) {
+                                  @RequestParam String secretKey) {
         log.trace("get credential where id " + id);
         return credentialMapperService.convert(credentialPersistenceService.find(id));
     }
@@ -61,7 +61,7 @@ public class CredentialRestController {
                                         @RequestParam(required = false, defaultValue = "ASC") String sortingDirection,
                                         @RequestParam(required = false, defaultValue = "${page.default.size}") int pageSize,
                                         @RequestParam(required = false, defaultValue = "0") int pageIndex,
-                                        @RequestHeader String secretKey) {
+                                        @RequestParam String secretKey) {
         log.trace("get credentials where filter is " + payloadFilter);
         Specification<CredentialEntity> filter = credentialMapperService.getFilter(payloadFilter, secretKey);
         Pageable pageRequest = credentialMapperService.getPageRequest(sortingBy, sortingDirection, pageSize, pageIndex);
@@ -77,7 +77,7 @@ public class CredentialRestController {
     @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialPayload reset(@PathVariable("id") Integer id,
                                    @Valid @RequestBody @Encrypt(secretKey = "#secretKey") CredentialPayload payload,
-                                   @RequestHeader String secretKey) {
+                                   @RequestParam String secretKey) {
         log.trace("update credential where id " + id);
         return credentialMapperService.convert(credentialPersistenceService.reset(id, credentialMapperService.convert(payload)));
     }
@@ -89,7 +89,7 @@ public class CredentialRestController {
     @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialPayload patch(@PathVariable("id") Integer id,
                                    @Valid @RequestBody @Encrypt(secretKey = "#secretKey") CredentialPayload payload,
-                                   @RequestHeader String secretKey) {
+                                   @RequestParam String secretKey) {
         log.trace("update credential where id " + id);
         return credentialMapperService.convert(credentialPersistenceService.merge(id, credentialMapperService.convert(payload)));
     }
@@ -102,7 +102,7 @@ public class CredentialRestController {
     @Traceable(level = Traceable.Level.TRACE)
     @Decrypt(secretKey = "#secretKey", decrypter = CryptorServiceProvider.Decrypter.class)
     public CredentialPayload create(@Valid @RequestBody @Encrypt(secretKey = "#secretKey") CredentialPayload payload,
-                                    @RequestHeader String secretKey) {
+                                    @RequestParam String secretKey) {
         log.trace("create credential");
         return credentialMapperService.convert(credentialPersistenceService.create(credentialMapperService.convert(payload)));
     }
@@ -123,7 +123,7 @@ public class CredentialRestController {
     @ResponseBody
     @Traceable(level = Traceable.Level.TRACE)
     public void delete(@ModelAttribute @Encrypt(secretKey = "#secretKey") CredentialPayload payloadFilter,
-                       @RequestHeader String secretKey) {
+                       @RequestParam String secretKey) {
 
         log.trace("remove credentials where filter is " + payloadFilter);
         Specification<CredentialEntity> filter = credentialMapperService.getFilter(payloadFilter, secretKey);

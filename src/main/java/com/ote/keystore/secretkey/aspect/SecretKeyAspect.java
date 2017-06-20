@@ -1,7 +1,7 @@
-package com.ote.keystore.cryptor.aspect;
+package com.ote.keystore.secretkey.aspect;
 
-import com.ote.keystore.cryptor.annotation.SecretKey;
-import com.ote.keystore.cryptor.service.SecretKeyService;
+import com.ote.keystore.secretkey.service.SecretKeyService;
+import com.ote.keystore.secretkey.annotation.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -35,7 +35,7 @@ public class SecretKeyAspect {
         log.warn("### SecretKeyAspect is loaded");
     }
 
-    @Around("execution(* *(.., @com.ote.keystore.cryptor.annotation.SecretKey (java.lang.String), ..))")
+    @Around("execution(* *(.., @com.ote.keystore.secretkey.annotation.SecretKey (java.lang.String), ..))")
     public Object execute(ProceedingJoinPoint point) throws Throwable {
 
         MethodSignature signature = (MethodSignature) point.getSignature();

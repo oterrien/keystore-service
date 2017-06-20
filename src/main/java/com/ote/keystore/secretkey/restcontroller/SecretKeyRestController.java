@@ -1,4 +1,4 @@
-package com.ote.keystore.cryptor.restcontroller;
+package com.ote.keystore.secretkey.restcontroller;
 
 import com.ote.keystore.trace.annotation.Traceable;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,17 @@ public class SecretKeyRestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Traceable(level = Traceable.Level.TRACE)
-    public void updateSecretKey(@PathVariable String secretKey) {
+    public void updateSecretKey(@PathVariable String secretKey, @RequestParam String test) {
         log.trace("update secretKey");
+    }
+
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @Traceable(level = Traceable.Level.TRACE)
+    public String test(@RequestParam String test,@RequestParam String test01) {
+        log.trace("update secretKey");
+        return "";
     }
 }

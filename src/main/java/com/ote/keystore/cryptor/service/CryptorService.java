@@ -2,11 +2,8 @@ package com.ote.keystore.cryptor.service;
 
 import com.ote.keystore.cryptor.Cryptable;
 import com.ote.keystore.cryptor.annotation.Crypted;
-import com.ote.keystore.cryptor.annotation.Decrypt;
-import com.ote.keystore.cryptor.annotation.SecretKey;
+import com.ote.keystore.secretkey.annotation.SecretKey;
 import com.ote.keystore.trace.annotation.Traceable;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
